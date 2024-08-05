@@ -10,7 +10,7 @@
             @csrf
             <div class="form-group">
                 <label for="author">Author</label>
-                <input type="text" name="author" class="form-control" value="{{ $post->author }}" required>
+                <input type="text" name="author" class="form-control" value="{{ $post->author }}" >
             </div>
             <div class="form-group">
                 <label for="title">Title</label>

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services;
 
 use Illuminate\Http\Request;
@@ -8,15 +7,23 @@ use Illuminate\Support\Facades\Session;
 use App\DTOs\PostDTO;
 
 class PostService {
+    protected $dto;
+    public function __construct(PostDTO $dto)
+    {
+        $this->dto = $dto;
+    }
 
-    public function valid(Request $request) {
-        $validatePost = $request->validate([
-            'title' => ['required'],
+    protected function valid(Request $request): array
+    {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
-            'author' => ['nullable', 'string'], 
+            'author' => ['nullable', 'string'],
         ]);
 
-        return new PostDTO($validatePost['title'], $validatePost['content'], $validatePost['author']);//return opject from PostDTO
+        // Transform validated data into PostDTO array format
+        return $this->dto->toArray($validatedData);
     }
 
     public function update(Request $request, $id) {
@@ -27,7 +34,7 @@ class PostService {
         $postDTO = $this->valid($request);
 
         // Update post using DTO data
-        $post->update($postDTO->toArray());
+        $post->update($postDTO);
 
         // Set success message
         Session::flash("success", 'Post updated successfully');
@@ -38,7 +45,7 @@ class PostService {
         $postDTO = $this->valid($request);
 
         // Store in database
-        Post::create($postDTO->toArray());
+        Post::create($postDTO);//is array
 
         // Set success message
         Session::flash("success", 'Post added successfully');
